@@ -25,8 +25,7 @@ Or serve the folder with any static file server.
 
 ## Notes
 
-- The page opens with a Scorpion-inspired animated intro that reveals the Praeto logo before fading into the homepage.
-- The intro is shown once per browser session (stored in `localStorage`).
+- The page opens with a Scorpion-inspired animated intro that reveals the Praeto logo before fading into the homepage. The intro plays out fully on every visit.
 - The questionnaire collects business identity, project goals & vision, and contact details.
 - It focuses on what the client wants the app/website to be and how it will be used — no code, backend, or build questions.
 - Form submission currently shows a local success message and logs the collected data to the browser console.
