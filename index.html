@@ -155,7 +155,21 @@
 
         <form class="project-form" id="projectForm" novalidate>
           <fieldset>
-            <legend>1. Business Identity</legend>
+            <legend>1. Who is this for?</legend>
+
+            <div class="form-group">
+              <label>Who will mainly use this app or website? <span class="required" aria-label="required">*</span></label>
+              <div class="radio-group" id="audienceGroup">
+                <label class="radio-label"><input type="radio" name="audience" value="customer" id="audienceCustomer"> Customers or clients — to purchase, book, browse, or interact with us</label>
+                <label class="radio-label"><input type="radio" name="audience" value="internal" id="audienceInternal"> Our company or team — for admin, operations, or internal workflows</label>
+                <label class="radio-label"><input type="radio" name="audience" value="both" id="audienceBoth"> Both customers and our internal team</label>
+              </div>
+              <span class="error-message" id="audienceError">Please select who this app or website is for.</span>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>2. Business Identity</legend>
 
             <div class="form-group">
               <label for="companyName">Company name <span class="required" aria-label="required">*</span></label>
@@ -203,11 +217,11 @@
           </fieldset>
 
           <fieldset>
-            <legend>2. Project Goals & Vision</legend>
+            <legend>3. Project Goals & Vision</legend>
 
             <div class="form-group">
               <label for="projectGoal">What is the main goal of this app or website? <span class="required" aria-label="required">*</span></label>
-              <textarea id="projectGoal" name="projectGoal" rows="4" required placeholder="e.g. Allow customers to book appointments online, sell products, showcase our portfolio, collect leads, etc."></textarea>
+              <textarea id="projectGoal" name="projectGoal" rows="4" required placeholder="e.g. Allow customers to book appointments online, sell products, manage our workflow, collect leads, etc."></textarea>
               <span class="error-message" id="projectGoalError">Please describe your main goal.</span>
             </div>
 
@@ -226,20 +240,40 @@
               <span class="error-message" id="appTypeError">Please select at least one app or website type.</span>
             </div>
 
-            <div class="form-group">
-              <label for="targetAudience">Who are your users or customers? <span class="required" aria-label="required">*</span></label>
-              <textarea id="targetAudience" name="targetAudience" rows="3" required placeholder="Describe your ideal customers, their needs, and how they currently interact with you."></textarea>
-              <span class="error-message" id="targetAudienceError">Please describe your target audience.</span>
+            <div class="branch" data-branch="customer">
+              <div class="form-group">
+                <label for="targetAudience">Who are your customers or users? <span class="required" aria-label="required">*</span></label>
+                <textarea id="targetAudience" name="targetAudience" rows="3" required placeholder="Describe your ideal customers, their needs, and how they currently interact with you."></textarea>
+                <span class="error-message" id="targetAudienceError">Please describe your target audience.</span>
+              </div>
+
+              <div class="form-group">
+                <label for="customerActions">What should customers be able to do?</label>
+                <textarea id="customerActions" name="customerActions" rows="3" placeholder="e.g. Browse products, make a purchase, book a service, create an account, leave a review."></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="customerIntegrations">What features or integrations should your customer-facing app or website include?</label>
+                <textarea id="customerIntegrations" name="customerIntegrations" rows="3" placeholder="e.g. Online payments, booking calendar, contact forms, live chat, maps, customer login, email notifications, social media feeds."></textarea>
+              </div>
             </div>
 
-            <div class="form-group">
-              <label for="userActions">What should users be able to do?</label>
-              <textarea id="userActions" name="userActions" rows="3" placeholder="e.g. Create an account, browse services, make a purchase, book a call, leave a review, track an order."></textarea>
-            </div>
+            <div class="branch" data-branch="internal">
+              <div class="form-group">
+                <label for="internalTeam">Which team or department will mainly use this? <span class="required" aria-label="required">*</span></label>
+                <textarea id="internalTeam" name="internalTeam" rows="3" required placeholder="e.g. Sales team, operations, warehouse staff, management."></textarea>
+                <span class="error-message" id="internalTeamError">Please describe the team or department.</span>
+              </div>
 
-            <div class="form-group">
-              <label for="integrations">What features or integrations should your app or website include?</label>
-              <textarea id="integrations" name="integrations" rows="3" placeholder="e.g. Online payments, booking calendar, contact forms, live chat, maps, customer login, email notifications, social media feeds."></textarea>
+              <div class="form-group">
+                <label for="internalActions">What should your team be able to do?</label>
+                <textarea id="internalActions" name="internalActions" rows="3" placeholder="e.g. Track orders, manage inventory, approve requests, generate reports, schedule appointments."></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="internalIntegrations">What features or integrations should your internal tool include?</label>
+                <textarea id="internalIntegrations" name="internalIntegrations" rows="3" placeholder="e.g. Connect to existing CRM, email alerts, role-based access, reporting dashboard, file uploads."></textarea>
+              </div>
             </div>
 
             <div class="form-group">
@@ -254,7 +288,7 @@
           </fieldset>
 
           <fieldset>
-            <legend>3. Contact Details</legend>
+            <legend>4. Contact Details</legend>
 
             <div class="form-row">
               <div class="form-group">

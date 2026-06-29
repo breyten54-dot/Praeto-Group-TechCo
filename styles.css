@@ -416,6 +416,16 @@ p + p {
 }
 
 /* === Questionnaire === */
+.branch {
+  display: none;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.branch.active {
+  display: flex;
+}
+
 .questionnaire-grid {
   display: grid;
   grid-template-columns: 0.9fr 1.1fr;

@@ -38,38 +38,91 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // === Audience branching ===
+  const audienceRadios = document.querySelectorAll('input[name="audience"]');
+  const customerBranch = document.querySelector('.branch[data-branch="customer"]');
+  const internalBranch = document.querySelector('.branch[data-branch="internal"]');
+
+  function getSelectedAudience() {
+    return document.querySelector('input[name="audience"]:checked')?.value;
+  }
+
+  function updateBranches() {
+    const audience = getSelectedAudience();
+
+    if (customerBranch) {
+      customerBranch.classList.toggle('active', audience === 'customer' || audience === 'both');
+    }
+    if (internalBranch) {
+      internalBranch.classList.toggle('active', audience === 'internal' || audience === 'both');
+    }
+
+    // Clear errors on fields that become hidden
+    ['targetAudience', 'internalTeam'].forEach((id) => {
+      const input = document.getElementById(id);
+      const branch = input?.closest('.branch');
+      if (branch && !branch.classList.contains('active')) {
+        clearError(input.closest('.form-group'));
+      }
+    });
+  }
+
+  audienceRadios.forEach((radio) => {
+    radio.addEventListener('change', () => {
+      updateBranches();
+      clearError(document.getElementById('audienceGroup')?.closest('.form-group'));
+    });
+  });
+
   // === Form validation & submission ===
   const form = document.getElementById('projectForm');
   const successSection = document.getElementById('success');
   const questionnaireSection = document.getElementById('questionnaire');
   const backHomeBtn = document.getElementById('backHome');
 
-  const requiredFields = [
-    { id: 'companyName', messageId: 'companyNameError' },
-    { id: 'industry', messageId: 'industryError' },
-    { id: 'businessDescription', messageId: 'businessDescriptionError' },
-    { id: 'projectGoal', messageId: 'projectGoalError' },
-    { id: 'targetAudience', messageId: 'targetAudienceError' },
-    { id: 'contactName', messageId: 'contactNameError' },
-    { id: 'email', messageId: 'emailError', type: 'email' },
-  ];
+  function getRequiredFields() {
+    const base = [
+      { id: 'companyName', messageId: 'companyNameError' },
+      { id: 'industry', messageId: 'industryError' },
+      { id: 'businessDescription', messageId: 'businessDescriptionError' },
+      { id: 'projectGoal', messageId: 'projectGoalError' },
+      { id: 'contactName', messageId: 'contactNameError' },
+      { id: 'email', messageId: 'emailError', type: 'email' },
+    ];
+
+    const audience = getSelectedAudience();
+    if (audience === 'customer' || audience === 'both') {
+      base.push({ id: 'targetAudience', messageId: 'targetAudienceError' });
+    }
+    if (audience === 'internal' || audience === 'both') {
+      base.push({ id: 'internalTeam', messageId: 'internalTeamError' });
+    }
+    return base;
+  }
 
   function validateEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
   function clearError(group) {
-    group.classList.remove('has-error');
+    group?.classList.remove('has-error');
   }
 
   function showError(group) {
-    group.classList.add('has-error');
+    group?.classList.add('has-error');
   }
 
   function validateField(fieldDef) {
     const input = document.getElementById(fieldDef.id);
     const group = input?.closest('.form-group');
     if (!input || !group) return false;
+
+    // Skip validation if the field is inside a hidden branch
+    const branch = group.closest('.branch');
+    if (branch && !branch.classList.contains('active')) {
+      clearError(group);
+      return true;
+    }
 
     let valid = input.value.trim() !== '';
     if (valid && fieldDef.type === 'email') {
@@ -84,16 +137,31 @@ document.addEventListener('DOMContentLoaded', () => {
     return valid;
   }
 
-  requiredFields.forEach((field) => {
-    const input = document.getElementById(field.id);
-    if (!input) return;
-    input.addEventListener('input', () => {
-      if (input.value.trim() !== '') {
-        clearError(input.closest('.form-group'));
-      }
+  function attachValidationListeners() {
+    const allPotentialFields = [
+      { id: 'companyName', messageId: 'companyNameError' },
+      { id: 'industry', messageId: 'industryError' },
+      { id: 'businessDescription', messageId: 'businessDescriptionError' },
+      { id: 'projectGoal', messageId: 'projectGoalError' },
+      { id: 'targetAudience', messageId: 'targetAudienceError' },
+      { id: 'internalTeam', messageId: 'internalTeamError' },
+      { id: 'contactName', messageId: 'contactNameError' },
+      { id: 'email', messageId: 'emailError', type: 'email' },
+    ];
+
+    allPotentialFields.forEach((field) => {
+      const input = document.getElementById(field.id);
+      if (!input) return;
+      input.addEventListener('input', () => {
+        if (input.value.trim() !== '') {
+          clearError(input.closest('.form-group'));
+        }
+      });
+      input.addEventListener('blur', () => validateField(field));
     });
-    input.addEventListener('blur', () => validateField(field));
-  });
+  }
+
+  attachValidationListeners();
 
   function validateCheckboxGroup(groupId, errorId) {
     const group = document.getElementById(groupId);
@@ -111,12 +179,32 @@ document.addEventListener('DOMContentLoaded', () => {
     return checked;
   }
 
+  function validateAudience() {
+    const audienceGroup = document.getElementById('audienceGroup');
+    const parent = audienceGroup?.closest('.form-group');
+    if (!parent) return false;
+
+    const selected = getSelectedAudience();
+    if (selected) {
+      clearError(parent);
+      return true;
+    } else {
+      showError(parent);
+      return false;
+    }
+  }
+
   if (form) {
     form.addEventListener('submit', (event) => {
       event.preventDefault();
 
       let allValid = true;
 
+      if (!validateAudience()) {
+        allValid = false;
+      }
+
+      const requiredFields = getRequiredFields();
       requiredFields.forEach((field) => {
         if (!validateField(field)) {
           allValid = false;
@@ -147,6 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (otherInput) {
         otherInput.disabled = true;
       }
+      updateBranches();
 
       if (questionnaireSection && successSection) {
         questionnaireSection.hidden = true;
