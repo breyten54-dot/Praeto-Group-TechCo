@@ -7,14 +7,25 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <div id="intro" class="intro-overlay" aria-hidden="true">
+    <div class="intro-binary" id="introBinary"></div>
+    <div class="intro-scanline"></div>
+    <div class="intro-glitch" id="introGlitch"></div>
+    <div class="intro-logo-stage">
+      <img src="logo.svg" alt="" class="intro-logo" id="introLogo">
+      <div class="intro-logo-underline"></div>
+    </div>
+    <button type="button" class="intro-skip" id="skipIntro">Skip intro</button>
+  </div>
+
   <header class="site-header">
     <div class="container nav-container">
       <a href="#" class="logo">
-        <img src="logo.png" alt="Praeto Group TechCo logo" class="logo-img">
+        <img src="logo.svg" alt="Praeto Group TechCo logo" class="logo-img">
         <span class="logo-text">Praeto Group <span class="logo-tech">TechCo</span></span>
       </a>
       <nav class="main-nav" aria-label="Main navigation">
@@ -359,7 +370,7 @@
     <div class="container footer-grid">
       <div>
         <a href="#" class="logo">
-          <img src="logo.png" alt="Praeto Group TechCo logo" class="logo-img">
+          <img src="logo.svg" alt="Praeto Group TechCo logo" class="logo-img">
           <span class="logo-text">Praeto Group <span class="logo-tech">TechCo</span></span>
         </a>
         <p class="footer-tagline">Tailored apps for businesses going digital.</p>

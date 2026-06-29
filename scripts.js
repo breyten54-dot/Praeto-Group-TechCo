@@ -5,6 +5,57 @@ document.addEventListener('DOMContentLoaded', () => {
     yearEl.textContent = new Date().getFullYear();
   }
 
+  // === Intro sequence ===
+  const intro = document.getElementById('intro');
+  const introBinary = document.getElementById('introBinary');
+  const skipIntro = document.getElementById('skipIntro');
+
+  function generateBinaryRain() {
+    if (!introBinary) return;
+    const fragment = document.createDocumentFragment();
+    const count = window.innerWidth < 768 ? 40 : 80;
+
+    for (let i = 0; i < count; i++) {
+      const span = document.createElement('span');
+      span.textContent = Math.random() > 0.5 ? '1' : '0';
+      span.style.left = `${Math.random() * 100}%`;
+      span.style.top = `${Math.random() * 100}%`;
+      span.style.fontSize = `${12 + Math.random() * 14}px`;
+      span.style.animationDelay = `${Math.random() * 2.5}s`;
+      span.style.animationDuration = `${2 + Math.random() * 2}s`;
+      fragment.appendChild(span);
+    }
+
+    introBinary.appendChild(fragment);
+  }
+
+  function endIntro() {
+    if (!intro) return;
+    intro.classList.add('exiting');
+    document.body.style.overflow = '';
+    localStorage.setItem('praetoIntroSeen', 'true');
+    setTimeout(() => {
+      intro.hidden = true;
+    }, 1100);
+  }
+
+  if (intro) {
+    document.body.style.overflow = 'hidden';
+    generateBinaryRain();
+
+    const hasSeenIntro = localStorage.getItem('praetoIntroSeen') === 'true';
+    const introDuration = hasSeenIntro ? 1200 : 5200;
+
+    const autoEnd = setTimeout(endIntro, introDuration);
+
+    if (skipIntro) {
+      skipIntro.addEventListener('click', () => {
+        clearTimeout(autoEnd);
+        endIntro();
+      });
+    }
+  }
+
   // === Mobile menu ===
   const menuToggle = document.querySelector('.mobile-menu-toggle');
   const mainNav = document.querySelector('.main-nav');
