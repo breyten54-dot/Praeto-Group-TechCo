@@ -5,7 +5,7 @@ A professional landing page and client onboarding questionnaire for Praeto Group
 ## Files
 
 - `index.html` — Landing page with animated Scorpion-style intro, hero, services, process, and questionnaire sections
-- `styles.css` — Responsive styling with dark theme, gold accent, and intro animations
+- `styles.css` — Responsive styling with dark theme, green accent, and intro animations
 - `scripts.js` — Intro sequence, form validation, mobile menu, and success-state handling
 - `logo.svg` — Custom Praeto Group TechCo logo recreated as an animatable SVG
 
