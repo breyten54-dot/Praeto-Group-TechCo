@@ -8,8 +8,10 @@ A professional landing page and client onboarding questionnaire for Praeto Group
 - `styles.css` — Responsive styling with dark theme, green accent, and intro animations
 - `scripts.js` — Intro sequence, form validation, mobile menu, and success-state handling
 - `logo.svg` — Custom Praeto Group TechCo logo recreated as an animatable SVG
+- `api/send-brief.js` — Vercel serverless function that emails submitted project briefs
+- `package.json` — Project dependencies (nodemailer)
 
-## How to view
+## How to view locally
 
 Open `index.html` in any modern web browser:
 
@@ -28,62 +30,39 @@ Or serve the folder with any static file server.
 - The page opens with a Scorpion-inspired animated intro that reveals the Praeto logo before fading into the homepage. The intro plays out fully on every visit.
 - The questionnaire collects business identity, project goals & vision, and contact details.
 - It focuses on what the client wants the app/website to be and how it will be used — no code, backend, or build questions.
-- Form submission sends the project brief to **praetotech@outlook.com** via [EmailJS](https://www.emailjs.com/).
-- To enable email delivery, update `EMAILJS_PUBLIC_KEY`, `EMAILJS_SERVICE_ID`, and `EMAILJS_TEMPLATE_ID` in `scripts.js` with your EmailJS credentials. Until then, the form will show the success state locally for testing.
 
-## Email setup (EmailJS)
+## Email setup (Vercel + Outlook)
 
-The project brief form is wired to send submissions to **praetotech@outlook.com** using EmailJS.
+Project briefs are sent to **praetotech@outlook.com** via a Vercel serverless function using Outlook SMTP.
 
-1. Sign up for a free account at [https://www.emailjs.com/](https://www.emailjs.com/)
-2. Create an **Email Service** (e.g., Outlook, Gmail, or any SMTP provider)
-3. Create an **Email Template** with variables matching the form field names:
-   - `{{companyName}}`, `{{industry}}`, `{{companySize}}`, `{{businessDescription}}`
-   - `{{brandValues}}`, `{{existingBranding}}`
-   - `{{projectGoal}}`, `{{appType}}`, `{{appTypeOther}}`
-   - `{{targetAudience}}`, `{{customerActions}}`, `{{customerIntegrations}}`
-   - `{{internalTeam}}`, `{{internalActions}}`, `{{internalIntegrations}}`
-   - `{{userActions}}`, `{{integrations}}`
-   - `{{successMetrics}}`, `{{inspiration}}`
-   - `{{contactName}}`, `{{contactRole}}`, `{{email}}`, `{{phone}}`, `{{extraInfo}}`
-   - `{{to_email}}` (set automatically to `praetotech@outlook.com`)
-4. Copy your **Public Key**, **Service ID**, and **Template ID**
-5. Replace the placeholders in `scripts.js`:
+### 1. Generate an Outlook app password
 
-```js
-const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
-const EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';
-const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
-```
+Microsoft no longer allows plain passwords for SMTP. You need an app password:
 
-6. Deploy the updated file. Submissions will then be emailed to `praetotech@outlook.com`.
+1. Sign in to [https://account.microsoft.com/security](https://account.microsoft.com/security)
+2. Enable **Two-step verification** if it is not already on
+3. Go to **Advanced security options** → **Create a new app password**
+4. Copy the generated 16-character password
 
-### Email template example
+### 2. Add environment variables in Vercel
 
-```
-New Project Brief from {{contactName}} ({{email}})
+1. Go to your Vercel dashboard → select the Praeto project
+2. Open **Settings** → **Environment Variables**
+3. Add these two variables:
 
-Company: {{companyName}}
-Industry: {{industry}}
-Size: {{companySize}}
+| Name | Value |
+|------|-------|
+| `OUTLOOK_EMAIL` | `praetotech@outlook.com` |
+| `OUTLOOK_APP_PASSWORD` | the app password you just generated |
 
-Business Description:
-{{businessDescription}}
+4. Redeploy the project (Vercel → Deployments → Redeploy latest)
 
-Project Goal:
-{{projectGoal}}
+### 3. Test the form
 
-App/Website Type: {{appType}}
-Target Audience: {{targetAudience}}
-Customer Actions: {{customerActions}}
-Customer Integrations: {{customerIntegrations}}
-Internal Team: {{internalTeam}}
-Internal Actions: {{internalActions}}
-Internal Integrations: {{internalIntegrations}}
-Success Metrics: {{successMetrics}}
-Inspiration: {{inspiration}}
+Fill out and submit the project brief questionnaire. The details should arrive at `praetotech@outlook.com` within a few seconds.
 
-Contact Role: {{contactRole}}
-Phone: {{phone}}
-Extra Info: {{extraInfo}}
-```
+### Troubleshooting
+
+- If emails fail, check the Vercel function logs in **Deployments** → **Functions**
+- Make sure `OUTLOOK_APP_PASSWORD` is the app password, not your regular Outlook password
+- If Outlook SMTP keeps failing, consider switching to a transactional email service like SendGrid or Resend by editing `api/send-brief.js`

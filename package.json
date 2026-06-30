@@ -1,0 +1,14 @@
+{
+  "name": "praeto-group-techco",
+  "version": "1.0.0",
+  "description": "Landing page and client onboarding questionnaire for Praeto Group TechCo",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.14"
+  },
+  "devDependencies": {},
+  "license": "MIT"
+}
