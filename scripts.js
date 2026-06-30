@@ -5,6 +5,25 @@ document.addEventListener('DOMContentLoaded', () => {
     yearEl.textContent = new Date().getFullYear();
   }
 
+  // === EmailJS configuration ===
+  // Replace these placeholders with your credentials from https://www.emailjs.com/
+  const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
+  const EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';
+  const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+  const RECIPIENT_EMAIL = 'praetotech@outlook.com';
+
+  const emailjsConfigured =
+    EMAILJS_PUBLIC_KEY &&
+    EMAILJS_SERVICE_ID &&
+    EMAILJS_TEMPLATE_ID &&
+    !EMAILJS_PUBLIC_KEY.startsWith('YOUR_') &&
+    !EMAILJS_SERVICE_ID.startsWith('YOUR_') &&
+    !EMAILJS_TEMPLATE_ID.startsWith('YOUR_');
+
+  if (emailjsConfigured && typeof emailjs !== 'undefined') {
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+  }
+
   // === Intro sequence ===
   const intro = document.getElementById('intro');
   const introBinary = document.getElementById('introBinary');
@@ -261,24 +280,42 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Gather form data (replace with backend/API submission when ready)
+      // Gather form data
       const formData = new FormData(form);
       const data = Object.fromEntries(formData.entries());
-      data.appType = formData.getAll('appType');
+      data.appType = formData.getAll('appType').join(', ');
+      data.to_email = RECIPIENT_EMAIL;
 
-      console.log('Project brief submitted:', data);
+      function showSuccessState() {
+        form.reset();
+        if (otherInput) {
+          otherInput.disabled = true;
+        }
+        updateBranches();
 
-      // Show success state
-      form.reset();
-      if (otherInput) {
-        otherInput.disabled = true;
+        if (questionnaireSection && successSection) {
+          questionnaireSection.hidden = true;
+          successSection.hidden = false;
+          successSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       }
-      updateBranches();
 
-      if (questionnaireSection && successSection) {
-        questionnaireSection.hidden = true;
-        successSection.hidden = false;
-        successSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (emailjsConfigured && typeof emailjs !== 'undefined') {
+        emailjs
+          .send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, data)
+          .then(() => {
+            showSuccessState();
+          })
+          .catch((error) => {
+            console.error('Failed to send project brief:', error);
+            alert('There was a problem sending your brief. Please email us directly at praetotech@outlook.com.');
+          });
+      } else {
+        console.warn('EmailJS is not configured. Project brief data:', data);
+        console.info(
+          'To enable email delivery, sign up at https://www.emailjs.com/ and update EMAILJS_PUBLIC_KEY, EMAILJS_SERVICE_ID, and EMAILJS_TEMPLATE_ID in scripts.js.'
+        );
+        showSuccessState();
       }
     });
   }

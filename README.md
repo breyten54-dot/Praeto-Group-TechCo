@@ -28,5 +28,62 @@ Or serve the folder with any static file server.
 - The page opens with a Scorpion-inspired animated intro that reveals the Praeto logo before fading into the homepage. The intro plays out fully on every visit.
 - The questionnaire collects business identity, project goals & vision, and contact details.
 - It focuses on what the client wants the app/website to be and how it will be used — no code, backend, or build questions.
-- Form submission currently shows a local success message and logs the collected data to the browser console.
-- To connect the form to a backend or email service, replace the success-state logic in `scripts.js` with an API call.
+- Form submission sends the project brief to **praetotech@outlook.com** via [EmailJS](https://www.emailjs.com/).
+- To enable email delivery, update `EMAILJS_PUBLIC_KEY`, `EMAILJS_SERVICE_ID`, and `EMAILJS_TEMPLATE_ID` in `scripts.js` with your EmailJS credentials. Until then, the form will show the success state locally for testing.
+
+## Email setup (EmailJS)
+
+The project brief form is wired to send submissions to **praetotech@outlook.com** using EmailJS.
+
+1. Sign up for a free account at [https://www.emailjs.com/](https://www.emailjs.com/)
+2. Create an **Email Service** (e.g., Outlook, Gmail, or any SMTP provider)
+3. Create an **Email Template** with variables matching the form field names:
+   - `{{companyName}}`, `{{industry}}`, `{{companySize}}`, `{{businessDescription}}`
+   - `{{brandValues}}`, `{{existingBranding}}`
+   - `{{projectGoal}}`, `{{appType}}`, `{{appTypeOther}}`
+   - `{{targetAudience}}`, `{{customerActions}}`, `{{customerIntegrations}}`
+   - `{{internalTeam}}`, `{{internalActions}}`, `{{internalIntegrations}}`
+   - `{{userActions}}`, `{{integrations}}`
+   - `{{successMetrics}}`, `{{inspiration}}`
+   - `{{contactName}}`, `{{contactRole}}`, `{{email}}`, `{{phone}}`, `{{extraInfo}}`
+   - `{{to_email}}` (set automatically to `praetotech@outlook.com`)
+4. Copy your **Public Key**, **Service ID**, and **Template ID**
+5. Replace the placeholders in `scripts.js`:
+
+```js
+const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
+const EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+```
+
+6. Deploy the updated file. Submissions will then be emailed to `praetotech@outlook.com`.
+
+### Email template example
+
+```
+New Project Brief from {{contactName}} ({{email}})
+
+Company: {{companyName}}
+Industry: {{industry}}
+Size: {{companySize}}
+
+Business Description:
+{{businessDescription}}
+
+Project Goal:
+{{projectGoal}}
+
+App/Website Type: {{appType}}
+Target Audience: {{targetAudience}}
+Customer Actions: {{customerActions}}
+Customer Integrations: {{customerIntegrations}}
+Internal Team: {{internalTeam}}
+Internal Actions: {{internalActions}}
+Internal Integrations: {{internalIntegrations}}
+Success Metrics: {{successMetrics}}
+Inspiration: {{inspiration}}
+
+Contact Role: {{contactRole}}
+Phone: {{phone}}
+Extra Info: {{extraInfo}}
+```
